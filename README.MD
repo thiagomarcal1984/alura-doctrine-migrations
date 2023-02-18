@@ -243,3 +243,24 @@ O código acima recupera as entidades por meio de um repositório. Já o código
 $dql = 'SELECT student FROM Alura\\Doctrine\\Entity\\Student as student';
 $studentList = $entityManager->createQuery($dql)->getResult();
 ```
+
+# Buscando dados simples
+As queries DQL tem alguns métodos.
+1. `getResult()` retorna um array bidimensional de linhas e colunas do resultado.
+2. `getSingleResult()` retorna um array unidimensional contendo as colunas do resultado único.
+3. `getSingleScalarResult()` retorna um array unidimensional contendo o tipo primitivo retornado no resultado.
+
+Código modificado:
+```php
+// O comando modificado para buscar o número de alunos usando DQL, não SQL.
+$dql = 'SELECT COUNT(student) AS numero FROM Alura\\Doctrine\\Entity\\Student student';
+
+// Abaixo uma outra forma diferente de se obter o mesmo resultado:
+$studentClass = Student::class; // Conteúdo: "Alura\Doctrine\Entity\Student".
+$dql = "SELECT COUNT(student) AS numero FROM $studentClass student";
+
+var_dump($entityManager->createQuery($dql)->getSingleScalarResult());
+// Resultado: int(*número_de_estudantes*)
+```
+
+É possível executar operações CRUD (update, delete) com DQL! 

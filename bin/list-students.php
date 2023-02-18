@@ -37,5 +37,11 @@ foreach ($studentList as $student) {
     echo PHP_EOL . PHP_EOL;
 }
 
-// O comando abaixo foi modificado para não consultar o DB.
-echo count($studentList) . PHP_EOL;
+// O comando modificado para buscar o número de alunos usando DQL, não SQL.
+$dql = 'SELECT COUNT(student) AS numero FROM Alura\\Doctrine\\Entity\\Student student';
+
+// Abaixo uma outra forma diferente de se obter o mesmo resultado:
+$studentClass = Student::class; // Conteúdo: "Alura\Doctrine\Entity\Student".
+$dql = "SELECT COUNT(student) AS numero FROM $studentClass student";
+
+var_dump($entityManager->createQuery($dql)->getSingleScalarResult());
