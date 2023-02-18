@@ -188,3 +188,45 @@ for ($i=2; $i < $argc; $i++) {
 $entityManager->persist($student);
 $entityManager->flush();
 ```
+
+# Analisando o SQL executado
+O `EntityManagerCreator.php` foi modificado para exibir a saída SQL no console: 
+
+```php
+<?php
+
+namespace Alura\Doctrine\Helper;
+
+use Doctrine\DBAL\Logging\Middleware;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\ORMSetup;
+use Symfony\Component\Console\Logger\ConsoleLogger;
+use Symfony\Component\Console\Output\ConsoleOutput;
+
+class EntityManagerCreator
+{
+    public static function createEntityManager(): EntityManager
+    {
+        $config = ORMSetup::createAttributeMetadataConfiguration(
+            [__DIR__ . "/.."],
+            true
+        );
+
+        $consoleOutput = new ConsoleOutput(ConsoleOutput::VERBOSITY_DEBUG);
+        $consoleLogger = new ConsoleLogger($consoleOutput);
+        $logMiddleware = new Middleware($consoleLogger);
+        
+        $config->setMiddlewares([
+            $logMiddleware,
+        ]);
+
+        $conn = [
+            'driver' => 'pdo_sqlite',
+            'path' => __DIR__ . '/../../db.sqlite',
+        ];
+
+        return EntityManager::create($conn, $config);
+    }
+}
+```
+Do jeito como o código está atualmente, cada vez que uma entidade é mencionada um SQL simples é executado. Isso é ruim porque muitos comandos SQL são disparados ao invés de um único comando mais elaborado.

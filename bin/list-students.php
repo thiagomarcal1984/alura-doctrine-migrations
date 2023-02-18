@@ -37,4 +37,5 @@ foreach ($studentList as $student) {
     echo PHP_EOL . PHP_EOL;
 }
 
-echo $studentRepository->count([]) . PHP_EOL;
+// O comando abaixo foi modificado para não consultar o DB.
+echo count($studentList) . PHP_EOL;
