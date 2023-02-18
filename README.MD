@@ -304,3 +304,48 @@ $dql = '
 
 $studentList = $entityManager->createQuery($dql)->getResult();
 ```
+# Criando um repositório
+As entidades do Doctrine podem informar qual classe representa seu repositório. Às vezes precisamos de um repositório com mais métodos além daqueles que já vem nos repositórios padrão do Doctrine.
+
+Abaixo segue o código do repositório personalizado:
+```php
+<?php 
+
+namespace Alura\Doctrine;
+
+use Doctrine\ORM\EntityRepository;
+
+class DoctrineStudentRepository extends EntityRepository{
+    public function studentsAndCourses()
+    {
+        $dql = '
+            SELECT student, phone, course 
+            FROM Alura\\Doctrine\\Entity\\Student AS student 
+            LEFT JOIN student.phones AS phone
+            LEFT JOIN student.courses AS course
+        ';
+
+        return $this->getEntityManager()
+            ->createQuery($dql)->getResult()
+        ;
+    }
+}
+```
+E o código da entidade em que se indica o repositório que será usado:
+```php
+<?php
+
+namespace Alura\Doctrine\Entity;
+
+use Alura\Doctrine\DoctrineStudentRepository;
+use Doctrine\ORM\Mapping\Entity;
+
+#[Entity(repositoryClass: DoctrineStudentRepository::class)]
+class Student
+{ ... }
+```
+Código do cliente do repositório personalizado:
+```php
+$studentRepository = $entityManager->getRepository(Student::class);
+$studentList = $studentRepository->studentsAndCourses();
+```

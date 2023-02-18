@@ -2,13 +2,14 @@
 
 namespace Alura\Doctrine\Entity;
 
+use Alura\Doctrine\DoctrineStudentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\{
     Column, Entity, GeneratedValue, Id, ManyToMany, OneToMany
 };
 
-#[Entity]
+#[Entity(repositoryClass: DoctrineStudentRepository::class)]
 class Student
 {
     #[Id, GeneratedValue, Column]
