@@ -10,18 +10,13 @@ class DoctrineStudentRepository extends EntityRepository{
      */
     public function studentsAndCourses(): array 
     {
-        $dql = '
-            SELECT 
-                student
-                , phone
-                , course 
-            FROM Alura\\Doctrine\\Entity\\Student AS student 
-            LEFT JOIN student.phones AS phone
-            LEFT JOIN student.courses AS course
-        ';
-
-        return $this->getEntityManager()
-            ->createQuery($dql)->getResult()
+        return $this->createQueryBuilder(alias: 'student')
+            ->addSelect(select: 'phone')
+            ->addSelect(select: 'course')
+            ->leftJoin(join: 'student.phones', alias: 'phone')
+            ->leftJoin(join: 'student.courses', alias: 'course')
+            ->getQuery()
+            ->getResult()
         ;
     }
 }

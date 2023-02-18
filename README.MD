@@ -349,3 +349,40 @@ Código do cliente do repositório personalizado:
 $studentRepository = $entityManager->getRepository(Student::class);
 $studentList = $studentRepository->studentsAndCourses();
 ```
+
+# Usando QueryBuilder
+QueryBuilder é um recurso do Doctrine que facilita a criação de DQL. Escrever as DQL direto pode ser mais rápido, mas os QueryBuilders são úteis para construir queries se certas condições forem satisfeitas (por exemplo, filtro e ordenação).
+
+```php
+<?php 
+
+namespace Alura\Doctrine;
+
+use Doctrine\ORM\EntityRepository;
+
+class DoctrineStudentRepository extends EntityRepository{
+    /**
+     * @return Student[]
+     */
+    public function studentsAndCourses(): array 
+    {
+        return $this->createQueryBuilder(alias: 'student')
+            ->addSelect(select: 'phone')
+            ->addSelect(select: 'course')
+            // cláusula FROM implícita no repositório.
+            ->leftJoin(join: 'student.phones', alias: 'phone')
+            ->leftJoin(join: 'student.courses', alias: 'course')
+            ->getQuery() // Retorna a query depois de construída.
+            ->getResult()
+        ;
+        /** // Mesma coisa que:
+        * return $this->getEntityManager()->createQuery('
+        *     SELECT student, phone, course 
+        *     FROM Alura\\Doctrine\\Entity\\Student AS student 
+        *     LEFT JOIN student.phones AS phone
+        *     LEFT JOIN student.courses AS course
+        * ')->getResult();
+        */
+    }
+}
+```
