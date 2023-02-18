@@ -386,3 +386,31 @@ class DoctrineStudentRepository extends EntityRepository{
     }
 }
 ```
+# Para saber mais: parâmetros
+Para buscar um aluno com ID = 4, por exemplo, nós faríamos:
+```php
+$id = 4;
+$dql = '
+    SELECT student 
+    FROM Alura\Doctrine\Entity\Student student 
+    WHERE student.id = ?1
+';
+$query = $entityManager->createQuery($dql);
+$query->setParameter(1, $id);
+$student = $query->getSingleResult();
+```
+
+Dessa forma nós buscamos apenas um aluno (por isso o Single no método). Além de parâmetros **posicionais** (?1, ?2, etc) nós também podemos usar parâmetros **nomeados**:
+
+```php
+$id = 4;
+$dql = '
+    SELECT student 
+    FROM Alura\Doctrine\Entity\Student student 
+    WHERE student.id = :id
+';
+$query = $entityManager->createQuery($dql);
+$query->setParameter('id', $id);
+$student = $query->getSingleResult();
+```
+Lembrando que a query poderia ser criada também usando um query builder dentro de um repositório ao invés de chamar o createQuery do EntityManager.
