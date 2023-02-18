@@ -264,3 +264,27 @@ var_dump($entityManager->createQuery($dql)->getSingleScalarResult());
 ```
 
 É possível executar operações CRUD (update, delete) com DQL! 
+
+# Fetch Eager
+Por padrão, as entidades obtidas por meio de relacionamentos só são realizados quando necessário (o Fetch Lazy). Mas há vezes em que é necessário buscar essas entidades mesmo sem uso imediato (o Fetch Eager).
+
+Essa configuração pode ser feita direto na entidade:
+```php
+use Doctrine\ORM\Mapping\{ Entity, OneToMany };
+
+#[Entity]
+class Student
+{
+    ...
+
+    #[OneToMany(
+        mappedBy: "student",
+        targetEntity: Phone::class,
+        cascade: ["persist", "remove"],
+        fetch: 'EAGER' // Força a busca dos telefones.
+    )]
+    private Collection $phones;
+
+    ...
+}
+```
