@@ -230,3 +230,16 @@ class EntityManagerCreator
 }
 ```
 Do jeito como o código está atualmente, cada vez que uma entidade é mencionada um SQL simples é executado. Isso é ruim porque muitos comandos SQL são disparados ao invés de um único comando mais elaborado.
+
+# Conhecendo DQL
+Por ora, o problema de execução de múltiplos SQL simples continua. A diferença está na forma como os objetos Student são recuperados:
+
+```php
+$studentRepository = $entityManager->getRepository(Student::class);
+$studentList = $studentRepository->findAll();
+```
+O código acima recupera as entidades por meio de um repositório. Já o código abaixo recupera as entidades por meio de uma query DQL (Doctrine Query Language):
+```php
+$dql = 'SELECT student FROM Alura\\Doctrine\\Entity\\Student as student';
+$studentList = $entityManager->createQuery($dql)->getResult();
+```

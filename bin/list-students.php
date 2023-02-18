@@ -8,10 +8,10 @@ use Alura\Doctrine\Helper\EntityManagerCreator;
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $entityManager = EntityManagerCreator::createEntityManager();
-$studentRepository = $entityManager->getRepository(Student::class);
+$dql = 'SELECT student FROM Alura\\Doctrine\\Entity\\Student as student';
 
 /** @var Student[] $studentList */
-$studentList = $studentRepository->findAll();
+$studentList = $entityManager->createQuery($dql)->getResult();
 
 foreach ($studentList as $student) {
     echo "ID: $student->id\nNome: $student->name";
