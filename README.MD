@@ -288,3 +288,19 @@ class Student
     ...
 }
 ```
+
+# Eager join
+A solução para o problema de múltiplas execuções de SQL simples é: use joins na DQL.
+
+Por que no código se usam LEFT JOINS? Porque se o lado direito da relação for vazio, as linhas do lado esquerdo não são retornadas. Por exemplo, alunos sem telefone não seriam incluídos no resultado.
+
+```php
+$dql = '
+    SELECT student, phone, course 
+    FROM Alura\\Doctrine\\Entity\\Student AS student 
+    LEFT JOIN student.phones AS phone
+    LEFT JOIN student.courses AS course
+';
+
+$studentList = $entityManager->createQuery($dql)->getResult();
+```

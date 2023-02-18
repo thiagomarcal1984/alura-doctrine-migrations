@@ -8,7 +8,15 @@ use Alura\Doctrine\Helper\EntityManagerCreator;
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $entityManager = EntityManagerCreator::createEntityManager();
-$dql = 'SELECT student FROM Alura\\Doctrine\\Entity\\Student as student';
+$dql = '
+    SELECT 
+        student
+        , phone
+        , course 
+    FROM Alura\\Doctrine\\Entity\\Student AS student 
+    LEFT JOIN student.phones AS phone
+    LEFT JOIN student.courses AS course
+';
 
 /** @var Student[] $studentList */
 $studentList = $entityManager->createQuery($dql)->getResult();
