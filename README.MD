@@ -163,3 +163,28 @@ php .\vendor\bin\doctrine-migrations migrations:diff
 ```
 
 Esse comando gera uma migração que mostra a diferença entre como está o DB atual e como estão as classes de Entidade!
+
+# Revisando o código
+Vamos pegar o código de `bin\insert-student.php` como exemplo de como funciona a comunicação com o banco de dados usando o ORM:
+```php
+<?php
+
+use Alura\Doctrine\Entity\Phone;
+use Alura\Doctrine\Entity\Student;
+use Alura\Doctrine\Helper\EntityManagerCreator;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+$entityManager = EntityManagerCreator::createEntityManager();
+
+$student = new Student($argv[1]);
+
+// $argc conta os parâmetros fornecidos via CLI.
+// É o mesmo que count($argv).
+for ($i=2; $i < $argc; $i++) {
+    $student->addPhone(new Phone($argv[$i]));
+}
+
+$entityManager->persist($student);
+$entityManager->flush();
+```

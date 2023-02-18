@@ -8,9 +8,13 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 $entityManager = EntityManagerCreator::createEntityManager();
 
-$student = new Student('Aluno com telefones');
-$student->addPhone(new Phone('(21) 99999 - 9999'));
-$student->addPhone(new Phone('(21) 2222 - 2222'));
+$student = new Student($argv[1]);
+
+// $argc conta os parâmetros fornecidos via CLI.
+// É o mesmo que count($argv).
+for ($i=2; $i < $argc; $i++) {
+    $student->addPhone(new Phone($argv[$i]));
+}
 
 $entityManager->persist($student);
 $entityManager->flush();
