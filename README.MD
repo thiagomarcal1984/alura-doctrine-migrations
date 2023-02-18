@@ -128,3 +128,38 @@ final class Version20230218125658 extends AbstractMigration
     }
 }
 ```
+
+# Conectando com o ORM
+
+Sabe o arquivo `cli-config.php`? ^^'Vamos recriá-lo com base na documentação do Doctrine Migrations. Há dois modelos diferentes na documentação: um que aceita usar o Doctrine ORM e o primeiro que não aceita.
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+use Alura\Doctrine\Helper\EntityManagerCreator;
+use Doctrine\Migrations\Configuration\EntityManager\ExistingEntityManager;
+use Doctrine\Migrations\Configuration\Migration\PhpFile;
+use Doctrine\Migrations\DependencyFactory;
+
+// Definir o caminho absoluto do arquivo migrations.php:
+$config = new PhpFile(__DIR__ . '/migrations.php'); 
+
+// Usar o EntityManager do projeto.
+$entityManager = EntityManagerCreator::createEntityManager();
+
+return DependencyFactory::fromEntityManager(
+    $config, 
+    new ExistingEntityManager($entityManager)
+);
+```
+
+Sabe o arquivo `migrations-db.php` que criamos? ^^'Ele não é mais necessário, por causa do arquivo `cli-config.php`.
+
+Repita os comandos de migration pra ver se o código voltou a funcionar. Há alguns comandos novos na CLI do Doctrine Migrations quando usamos esse novo `cli-config.php`. Por exemplo, o `migrations:diff`:
+```
+php .\vendor\bin\doctrine-migrations migrations:diff
+```
+
+Esse comando gera uma migração que mostra a diferença entre como está o DB atual e como estão as classes de Entidade!
