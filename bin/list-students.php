@@ -40,6 +40,9 @@ $dql = 'SELECT COUNT(student) AS numero FROM Alura\\Doctrine\\Entity\\Student st
 
 // Abaixo uma outra forma diferente de se obter o mesmo resultado:
 $studentClass = Student::class; // Conteúdo: "Alura\Doctrine\Entity\Student".
-$dql = "SELECT COUNT(student) AS numero FROM $studentClass student";
+$dql = "SELECT COUNT(student) AS numero FROM $studentClass student WHERE student.phones IS EMPTY";
 
-var_dump($entityManager->createQuery($dql)->getSingleScalarResult());
+$query = $entityManager->createQuery($dql);
+$query->enableResultCache(60*60*24); // Cacheável por um dia.
+$singleScalarResult = $query->getSingleScalarResult();
+var_dump($singleScalarResult);

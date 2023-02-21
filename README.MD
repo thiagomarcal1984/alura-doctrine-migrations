@@ -521,3 +521,81 @@ class EntityManagerCreator
     }
 }
 ```
+# Result cache
+O adequado é que o Result cache seja armazenado em um serviço de cache (usando uma das filhas de `AbstractAdapter`: `MemcachedAdapter`, `RedisAdapter`, `CouchbaseBucketAdapter`, `DoctrineDbalAdapter` etc.), e não usando `PhpFilesAdapter`.
+
+Outro detalhe: não são os resultados de todas as queries que são cacheados! Para cachear um resultado, você precisa informar isso na própria query.
+
+Comando para limpar o cache de resultados:
+```
+php .\bin\doctrine.php orm:clear-cache:result
+```
+
+Código do `EntityManagerCreator` atualizado:
+```php
+<?php
+
+namespace Alura\Doctrine\Helper;
+
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\ORMSetup;
+use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
+...
+
+class EntityManagerCreator
+{
+    public static function createEntityManager(): EntityManager
+    {
+        $config = ORMSetup::createAttributeMetadataConfiguration(
+            [__DIR__ . "/.."],
+            true
+        );
+
+        ...
+
+        // Caminho para o namespace.
+        $cacheDirectory = __DIR__ . '/../../var/cache';
+        
+        $config->setMetadataCache(new PhpFilesAdapter(
+            namespace: 'metadata_cache', // Pasta que contém o cache.
+            // defaultLifetime: 0, // Não expira.
+            directory: $cacheDirectory,
+        ));
+
+        $config->setQueryCache(
+            new PhpFilesAdapter(
+                namespace: 'query_cache',
+                directory: $cacheDirectory,
+            )
+        );
+
+        $config->setResultCache(
+            new PhpFilesAdapter(
+                namespace: 'result_cache',
+                directory: $cacheDirectory
+            )
+        );
+
+        $conn = [
+            'driver' => 'pdo_sqlite',
+            'path' => __DIR__ . '/../../db.sqlite',
+        ];
+
+        return EntityManager::create($conn, $config);
+    }
+}
+```
+Código de uma query cujo resultado será cacheável:
+```php
+$dql = "
+    SELECT COUNT(student) AS numero 
+    FROM $studentClass student 
+    WHERE student.phones IS EMPTY
+";
+
+$query = $entityManager->createQuery($dql);
+$query->enableResultCache(60*60*24); // Cacheável por um dia.
+var_dump($query->getSingleScalarResult());
+```
+
+O LC2 está em fase experimental ainda, além de ser complexo. Por isso, ele não será abordado no curso. O bom é estudá-lo à parte e não confiar nele em produção.

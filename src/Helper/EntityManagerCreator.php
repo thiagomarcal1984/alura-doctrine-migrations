@@ -42,6 +42,13 @@ class EntityManagerCreator
             )
         );
 
+        $config->setResultCache(
+            new PhpFilesAdapter(
+                namespace: 'result_cache',
+                directory: $cacheDirectory
+            )
+        );
+
         $conn = [
             'driver' => 'pdo_sqlite',
             'path' => __DIR__ . '/../../db.sqlite',
