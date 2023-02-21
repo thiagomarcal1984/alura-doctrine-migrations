@@ -36,7 +36,7 @@ foreach ($studentList as $student) {
 }
 
 // O comando modificado para buscar o número de alunos usando DQL, não SQL.
-$dql = 'SELECT COUNT(student) AS numero FROM Alura\\Doctrine\\Entity\\Student student';
+$dql = 'SELECT COUNT(student) AS numero FROM Alura\\Doctrine\\Entity\\Student student WHERE student.phones IS EMPTY';
 
 // Abaixo uma outra forma diferente de se obter o mesmo resultado:
 $studentClass = Student::class; // Conteúdo: "Alura\Doctrine\Entity\Student".

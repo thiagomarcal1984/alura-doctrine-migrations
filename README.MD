@@ -461,3 +461,63 @@ class EntityManagerCreator
     }
 }
 ```
+
+# Query cache
+
+A cada modificação nas queries, a pasta de query cache cresce. **Porém, queries inválidas não são armazenadas em cache**.
+
+Comandos do Doctrine para limpeza de cache (forma mais profissional do que simplesmente apagar o diretório de cache):
+```
+php .\bin\doctrine.php orm:clear-cache:metadata
+php .\bin\doctrine.php orm:clear-cache:query
+```
+
+Repare que esses comandos apagam o cache de metadata e das queries.
+
+Modificações no código do EntityManagerCreator: 
+```php
+<?php
+
+namespace Alura\Doctrine\Helper;
+
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\ORMSetup;
+use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
+...
+
+class EntityManagerCreator
+{
+    public static function createEntityManager(): EntityManager
+    {
+        $config = ORMSetup::createAttributeMetadataConfiguration(
+            [__DIR__ . "/.."],
+            true
+        );
+
+        ...
+
+        // Caminho para o namespace.
+        $cacheDirectory = __DIR__ . '/../../var/cache';
+        
+        $config->setMetadataCache(new PhpFilesAdapter(
+            namespace: 'metadata_cache', // Pasta que contém o cache.
+            // defaultLifetime: 0, // Não expira.
+            directory: $cacheDirectory,
+        ));
+
+        $config->setQueryCache(
+            new PhpFilesAdapter(
+                namespace: 'query_cache',
+                directory: $cacheDirectory,
+            )
+        );
+
+        $conn = [
+            'driver' => 'pdo_sqlite',
+            'path' => __DIR__ . '/../../db.sqlite',
+        ];
+
+        return EntityManager::create($conn, $config);
+    }
+}
+```

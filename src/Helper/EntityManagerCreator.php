@@ -26,11 +26,21 @@ class EntityManagerCreator
             $logMiddleware,
         ]);
 
+        // Caminho para o namespace.
+        $cacheDirectory = __DIR__ . '/../../var/cache';
+        
         $config->setMetadataCache(new PhpFilesAdapter(
             namespace: 'metadata_cache', // Pasta que contém o cache.
             // defaultLifetime: 0, // Não expira.
-            directory: __DIR__ . '/../../var/cache' // Caminho para o namespace.
+            directory: $cacheDirectory,
         ));
+
+        $config->setQueryCache(
+            new PhpFilesAdapter(
+                namespace: 'query_cache',
+                directory: $cacheDirectory,
+            )
+        );
 
         $conn = [
             'driver' => 'pdo_sqlite',
