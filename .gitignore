@@ -1,3 +1,7 @@
 .idea
 vendor
 db.sqlite
+
+# A pasta de cache armazenará arquivos PHP. O PHP também tem 
+# seu próprio cache, daí a escolha da classe PhpFilesAdapter.
+var/cache 

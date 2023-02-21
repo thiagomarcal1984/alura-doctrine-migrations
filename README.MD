@@ -422,3 +422,42 @@ Há vários caches diferentes no Doctrine:
 - a conversão de queries DQL para SQL tem seu custo: as queries DQL convertidas para SQL podem ser armazenadas em cache. Esse é o chamado *cache de query*;
 - os **resultados** das queries também podem ser armazenados em cache e por um tempo determinado: para isso, use os métodos `setCacheable(true)` e `setLifetime($integer)` nas queries. **Porém** é necessário invalidar esse cache caso novos registros sejam inseridos, e o cache precisa ser compartilhado (via Redis ou Memcached, por exemplo). Esse é o chamado *cache de resultados*;
 - O Doctrine possui um cache chamado L2C (Level Two Cache). Esse objeto é complexo de configurar, mas serve para invalidar caches que possam estar desatualizados.
+
+# Metadata cache
+Código para implementação do metadata cache:
+```php
+<?php
+
+namespace Alura\Doctrine\Helper;
+
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\ORMSetup;
+use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
+...
+
+class EntityManagerCreator
+{
+    public static function createEntityManager(): EntityManager
+    {
+        $config = ORMSetup::createAttributeMetadataConfiguration(
+            [__DIR__ . "/.."],
+            true
+        );
+
+        ...
+
+        $config->setMetadataCache(new PhpFilesAdapter(
+            namespace: 'metadata_cache', // Pasta que contém o cache.
+            // defaultLifetime: 0, // Não expira.
+            directory: __DIR__ . '/../../var/cache' // Caminho para o namespace.
+        ));
+
+        $conn = [
+            'driver' => 'pdo_sqlite',
+            'path' => __DIR__ . '/../../db.sqlite',
+        ];
+
+        return EntityManager::create($conn, $config);
+    }
+}
+```
