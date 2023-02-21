@@ -414,3 +414,11 @@ $query->setParameter('id', $id);
 $student = $query->getSingleResult();
 ```
 Lembrando que a query poderia ser criada também usando um query builder dentro de um repositório ao invés de chamar o createQuery do EntityManager.
+
+# Tipos diferentes de cache
+
+Há vários caches diferentes no Doctrine:
+- `ORMSetup::createAttributeMetadataConfiguration`, método disponível na classe `EntityManagerCreator`, retorna um `Doctrine\ORM\Configuration`, cujos dados podem ser armazenados em cache. Esse é o chanado *cache de mapeamento (metadata)*;
+- a conversão de queries DQL para SQL tem seu custo: as queries DQL convertidas para SQL podem ser armazenadas em cache. Esse é o chamado *cache de query*;
+- os **resultados** das queries também podem ser armazenados em cache e por um tempo determinado: para isso, use os métodos `setCacheable(true)` e `setLifetime($integer)` nas queries. **Porém** é necessário invalidar esse cache caso novos registros sejam inseridos, e o cache precisa ser compartilhado (via Redis ou Memcached, por exemplo). Esse é o chamado *cache de resultados*;
+- O Doctrine possui um cache chamado L2C (Level Two Cache). Esse objeto é complexo de configurar, mas serve para invalidar caches que possam estar desatualizados.
