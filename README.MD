@@ -599,3 +599,32 @@ var_dump($query->getSingleScalarResult());
 ```
 
 O LC2 está em fase experimental ainda, além de ser complexo. Por isso, ele não será abordado no curso. O bom é estudá-lo à parte e não confiar nele em produção.
+
+# Alterando o banco
+Comando para criar uma instância MySql com docker:
+```
+docker run --rm --name=tmp_mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=rootpw -e MYSQL_DATABASE=students mysql
+```
+
+O `EntityManagerCreator` precisa das mesmas configurações do PDO MySql:
+```php
+$conn = [
+    'driver' => 'pdo_mysql',
+    // 'path' => __DIR__ . '/../../db.sqlite',
+    'port' => 3306,
+    'host' => 'localhost',
+    'dbname' => 'students',
+    'user' => 'root',
+    'password' => 'rootpw',
+];
+```
+
+Comando para criar uma migração baseada na comparação com o DB recém-criado:
+```
+php .\vendor\bin\doctrine-migrations migrations:diff
+```
+O comando `doctrine-migrations migrations:diff` gera a migração sem aplicá-la. É diferente do comando `doctrine.php orm:schema-tool:create`, porque ele não cria a migração e já aplica as configurações de mapeamento no banco.
+
+Erros de criação de migrations após modificar o mapeamento (por exemplo, o nome das colunas da tabela/propriedades do objeto). **Limpar o cache deve ser suficiente para resolver o problema**.
+
+**Evite usar o cache em ambiente de desenvolvimento**. O cache pode nos induzir a erros durante o desenvolvimento. Preocupe-se com o cache apenas ao colocar o código em produção.

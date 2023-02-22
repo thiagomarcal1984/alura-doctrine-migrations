@@ -28,7 +28,7 @@ foreach ($studentList as $student) {
         echo "Cursos: ";
 
         echo implode(', ', $student->courses()
-            ->map(fn(Course $course) => $course->nome)
+            ->map(fn(Course $course) => $course->name)
             ->toArray());
     }
 

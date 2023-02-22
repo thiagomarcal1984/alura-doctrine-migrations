@@ -21,7 +21,7 @@ class Course
 
     public function __construct(
         #[Column]
-        public readonly string $nome
+        public readonly string $name
     ) {
         $this->students = new ArrayCollection();
     }
