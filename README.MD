@@ -628,3 +628,9 @@ O comando `doctrine-migrations migrations:diff` gera a migração sem aplicá-la
 Erros de criação de migrations após modificar o mapeamento (por exemplo, o nome das colunas da tabela/propriedades do objeto). **Limpar o cache deve ser suficiente para resolver o problema**.
 
 **Evite usar o cache em ambiente de desenvolvimento**. O cache pode nos induzir a erros durante o desenvolvimento. Preocupe-se com o cache apenas ao colocar o código em produção.
+
+# Integrações com frameworks
+Como integrar o Doctrine com os frameworks PHP:
+- Laravel: use o Laravel Doctrine: http://laraveldoctrine.org/
+- Laminas: use o Doctrine ORM Module: https://www.doctrine-project.org/projects/doctrine-orm-module/en/5.3/index.html
+- Symfony: o Doctrine é o ORM nativo do Symphony. Na falta, instale a dependência de acordo com a documentação: https://symfony.com/doc/current/doctrine.html . A documentação também possui instruções de como usar a linha de comando do Doctrine do Symfony para automatizar a criação de entidades e repositórios.
